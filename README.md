@@ -1,26 +1,6 @@
-# Lumen
+# Blag
 
-Gatsby starter for creating a blog
-
-## Features
-+ Inline CSS.
-+ Clean and extensible code.
-+ Six simple components: SiteSidebar, SiteNav, SiteLinks, SitePost, SitePage, ReadNext.
-+ [peterramsing/lost](https://github.com/peterramsing/lost) as a base for Grid.
-+ [matejlatin/Gutenberg](https://github.com/matejlatin/Gutenberg) as a base for Typography.
-
-## Installing
-Install this starter (assuming Gatsby is installed) by running from your CLI:
-`gatsby new lumen https://github.com/wpioneer/gatsby-starter-lumen`
-
-## Running in development
-`gatsby develop`
-
-![](http://i.imgur.com/422y5GV.png)
-
-## Ports
-
-[Statinamic port](https://github.com/thangngoc89/statinamic-theme-lumen) by [Khoa Nguyen](https://github.com/thangngoc89)
+Blog based on [lumen theme](https://github.com/wpioneer/gatsby-starter-lumen) and [Gatsby](https://github.com/gatsbyjs/gatsby)
 
 ## License
 The MIT License (MIT)

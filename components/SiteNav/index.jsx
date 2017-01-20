@@ -17,10 +17,6 @@ class SiteNav extends React.Component {
                   <Link to={ prefixLink('/about/')} activeClassName="current"> About me
                   </Link>
                 </li>
-                <li>
-                  <Link to={ prefixLink('/contact/')} activeClassName="current"> Contact me
-                  </Link>
-                </li>
               </ul>
             </nav>
             );

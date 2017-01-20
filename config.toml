@@ -1,14 +1,10 @@
-siteTitle = "Blog by John Doe"
-siteDescr = "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-siteAuthor = "John Doe"
+siteTitle = "Blog by George Montgomery"
+siteDescr = "Philosophy of Design."
+siteAuthor = "George Montgomery"
 
-siteTelegramUrl = "#"
-siteTwitterUrl = "#"
-siteGithubUrl = "#"
-siteEmailUrl = "#"
-siteRssUrl = "#"
-siteVkUrl = "#"
+siteTwitterUrl = "https://twitter.com/Adverbly_"
+siteLinkedInUrl = "https://www.linkedin.com/in/montgomerygeorge"
+siteGithubUrl = "https://github.com/Adverbly/Adverbly.github.io"
+siteEmailUrl = "mailto:george.p.montgomery@gmail.com"
 
-googleAnalyticsId = ""
-
-linkPrefix = "/gatsby-starter-lumen"
+linkPrefix = "/"
