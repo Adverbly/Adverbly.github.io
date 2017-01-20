@@ -1,3 +1,6 @@
 node_modules/
 .idea/
-.vscode/settings.json
+.vscode/
+
+bundle.js
+gatsby-starter-lumen.iml
