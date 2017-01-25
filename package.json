@@ -1,11 +1,11 @@
 {
-  "version": "1.1.0",
-  "name": "gatsby-starter-lumen",
-  "description": "Simple starter for Gatsby",
+  "version": "0.0.1",
+  "name": "gatsby-blag",
+  "description": "Blog",
   "main": "n/a",
   "scripts": {
     "develop": "gatsby develop",
-    "build": "npm run clean & gatsby build & copy",
+    "build": "npm run clean && gatsby build",
     "clean:public": "rimraf public",
     "clean": "npm run clean:public",
     "copy:files": "cp pages/*.{pdf,txt,png,jpg,jpeg,gif} public/",
@@ -17,9 +17,12 @@
   "keywords": [
     "gatsby",
     "lumen",
-    "starter"
+    "starter",
+    "blag",
+    "react",
+    "design"
   ],
-  "author": "Alexander Shelepenok <a.shelepenok@gmail.com>",
+  "author": "George Montgomery <george.p.montgomery@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
@@ -39,6 +42,10 @@
     "react-ga": "^2.1.2",
     "react-helmet": "^3.2.2",
     "react-router": "^2.6.1",
+    "react-addons-shallow-compare": "^15.4.1",
+    "react-dates": "^4.1.0",
+    "react-responsive-grid": "^0.3.3",
+    "react-typography": "^0.15.0",
     "safe-access": "^0.1.0",
     "underscore.string": "^3.2.3"
   },
