@@ -1,5 +1,6 @@
 const React = require('react')
 const DatePicker = require('./single-date-picker')
+const DraggableBalls = require('../../../components/DraggableBalls')
 require('react-dates/css/variables.scss')
 require('react-dates/css/styles.scss')
 
@@ -10,6 +11,11 @@ class Post extends React.Component {
         <h1>{this.props.route.page.data.title}</h1>
         <p>Greetings from React</p>
         <p>Visualization to come...</p>
+        <div className="draggable-balls-outer">
+          <div id="content">
+            <DraggableBalls />
+          </div>
+        </div>
         <p>If you're picky, here have a date picker</p>
         <DatePicker />
       </div>
