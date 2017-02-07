@@ -17,20 +17,14 @@ function clamp(n, min, max) {
   return Math.max(Math.min(n, max), min);
 }
 
-const allColors = [
-  '#EF767A', '#456990', '#49BEAA', '#49DCB1', '#EEB868', '#EF767A', '#456990',
-  '#49BEAA', '#49DCB1', '#EEB868', '#EF767A',
-];
-const [count, width, height, numArgs] = [4, 70, 90, 4];
+const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA'];
+const [count, width, height, numArgs] = [4, 70, 0, 4];
 // indexed by visual position
 const layout = range(count).map(n => {
-  const row = 1;
-  //Math.floor(n / 3);
-  const col = n % numArgs;
-  return [width * col, height * row];
+  return [width * n, height];
 });
 
-const DraggableBalls = React.createClass({
+const Arg = React.createClass({
   getInitialState() {
     return {
       mouse: [0, 0],
@@ -61,9 +55,7 @@ const DraggableBalls = React.createClass({
     const {order, lastPress, isPressed, delta: [dx, dy]} = this.state;
     if (isPressed) {
       const mouse = [pageX - dx, pageY - dy];
-      const col = clamp(Math.floor(mouse[0] / width), 0, 2);
-      const row = clamp(Math.floor(mouse[1] / height), 0, Math.floor(count / numArgs));
-      const index = row * numArgs + col;
+      const index = clamp(Math.floor(mouse[0] / width), 0, 3);
       const newOrder = reinsert(order, order.indexOf(lastPress), index);
       this.setState({mouse: mouse, order: newOrder});
     }
@@ -85,7 +77,7 @@ const DraggableBalls = React.createClass({
   render() {
     const {order, lastPress, isPressed, mouse} = this.state;
     return (
-      <div className="draggable-balls">
+      <div className="eval-container">
         {order.map((_, key) => {
           let style;
           let x;
@@ -109,22 +101,24 @@ const DraggableBalls = React.createClass({
             };
           }
           return (
-            <Motion key={key} style={style}>
-              {({translateX, translateY, scale, boxShadow}) =>
-                <div
-                  onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
-                  onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
-                  className="draggable-balls-ball"
-                  style={{
-                    backgroundColor: allColors[key],
-                    WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                    transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                    zIndex: key === lastPress ? 99 : visualPosition,
-                    boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
-                  }}
-                />
-              }
-            </Motion>
+            <div className="eval-arg">
+              <Motion key={key} style={style}>
+                {({translateX, translateY, scale, boxShadow}) =>
+                  <div
+                    onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
+                    onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
+                    className="arg"
+                    style={{
+                      backgroundColor: allColors[key],
+                      WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                      transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                      zIndex: key === lastPress ? 99 : visualPosition,
+                      boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
+                    }}
+                  />
+                }
+              </Motion>
+            </div>
           );
         })}
       </div>
@@ -132,4 +126,4 @@ const DraggableBalls = React.createClass({
   },
 });
 
-export default DraggableBalls;
+export default Arg;

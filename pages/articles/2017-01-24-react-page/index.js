@@ -1,6 +1,7 @@
 const React = require('react')
 const DatePicker = require('./single-date-picker')
 const DraggableBalls = require('../../../components/DraggableBalls')
+const BlockComputation = require('../../../components/BlockComputation')
 require('react-dates/css/variables.scss')
 require('react-dates/css/styles.scss')
 
@@ -18,6 +19,11 @@ class Post extends React.Component {
         </div>
         <p>If you're picky, here have a date picker</p>
         <DatePicker />
+
+        <p>If you're picky, here have a date picker</p>
+        <div id="content">
+          <BlockComputation />
+        </div>
       </div>
     )
   }

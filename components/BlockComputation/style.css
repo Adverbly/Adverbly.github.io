@@ -38,15 +38,26 @@
     height: 30px;
 }
 
-.eval-arg {
-    height: 100%;
-    padding: 10px 1px;
-    margin: 10px 1px;
+.eval-container {
+    width: 360px;
+    height: 220px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: auto;
+    /*height:100%;*/
+    /*width: auto;*/
     border: 1px solid blue;
+}
+
+.eval-arg {
+    padding: 10px 1px;
+    margin: 10px 1px;
+    /*height:100%;*/
+    /*width: auto;*/
+    border: 1px solid blue;
+    /*position: absolute;*/
+    width: 50px;
+    height: 50px;
 }
 
 .arg{
@@ -54,4 +65,5 @@
     width: 30px;
     height: 30px;
     margin: 10px;
+    position: absolute;
 }

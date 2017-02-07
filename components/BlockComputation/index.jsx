@@ -2,6 +2,7 @@ import React from 'react';
 import {Motion, spring} from 'react-motion';
 import range from 'lodash.range';
 import './style.css'
+import _ from 'lodash';
 
 const springSetting1 = {stiffness: 180, damping: 10};
 const springSetting2 = {stiffness: 120, damping: 17};
@@ -17,20 +18,14 @@ function clamp(n, min, max) {
   return Math.max(Math.min(n, max), min);
 }
 
-const allColors = [
-  '#EF767A', '#456990', '#49BEAA', '#49DCB1', '#EEB868', '#EF767A', '#456990',
-  '#49BEAA', '#49DCB1', '#EEB868', '#EF767A',
-];
-const [count, width, height, numArgs] = [4, 70, 90, 4];
+const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA'];
+const [count, width, height, numArgs] = [4, 70, 0, 4];
 // indexed by visual position
 const layout = range(count).map(n => {
-  const row = 1;
-  //Math.floor(n / 3);
-  const col = n % numArgs;
-  return [width * col, height * row];
+  return [width * n, height];
 });
 
-const DraggableBalls = React.createClass({
+const BlockComputation = React.createClass({
   getInitialState() {
     return {
       mouse: [0, 0],
@@ -38,6 +33,19 @@ const DraggableBalls = React.createClass({
       lastPress: null, // key of the last pressed component
       isPressed: false,
       order: range(count), // index: visual position. value: component key/id
+      targets: [],
+      invalidTargets: [],
+      // computation: {
+      //   left: {
+      //     left: {
+      //       left: 1,
+      //       right: 2
+      //     },
+      //     right: 3
+      //   },
+      //   right: 4
+      // }
+      computation: [[[0,1],2],3]
     };
   },
 
@@ -61,20 +69,48 @@ const DraggableBalls = React.createClass({
     const {order, lastPress, isPressed, delta: [dx, dy]} = this.state;
     if (isPressed) {
       const mouse = [pageX - dx, pageY - dy];
-      const col = clamp(Math.floor(mouse[0] / width), 0, 2);
-      const row = clamp(Math.floor(mouse[1] / height), 0, Math.floor(count / numArgs));
-      const index = row * numArgs + col;
+      const index = clamp(Math.floor(mouse[0] / width), 0, 3);
       const newOrder = reinsert(order, order.indexOf(lastPress), index);
       this.setState({mouse: mouse, order: newOrder});
     }
   },
 
+  findTargets(targetKey, array) {
+    let self = this;
+    let targets = []
+    array.forEach(function (element) {
+      if(targetKey === element) {
+        // we found the target key so add everything in this array as a target
+        array.forEach(function (candidateKey) {
+          if(element !== candidateKey){
+            if(typeof element ==='number'){
+              targets.push(candidateKey);
+            } else {
+              targets.push(_.flattenDeep(candidateKey));
+            }
+          }
+        })
+      }
+      else {
+        if (Array.isArray(element)){
+          targets = targets.concat(self.findTargets(targetKey, element));
+        }
+      }
+    })
+    //being lazy. Something off in algo but this is quick fix
+    return _.flattenDeep(targets);
+  },
+
   handleMouseDown(key, [pressX, pressY], {pageX, pageY}) {
+    let newTargets = this.findTargets(key, this.state.computation);
+
     this.setState({
       lastPress: key,
       isPressed: true,
       delta: [pageX - pressX, pageY - pressY],
       mouse: [pressX, pressY],
+      targets: newTargets,
+      invalidTargets: _.difference(this.state.order, newTargets),
     });
   },
 
@@ -82,10 +118,19 @@ const DraggableBalls = React.createClass({
     this.setState({isPressed: false, delta: [0, 0]});
   },
 
+  borderStyle(key) {
+    if(this.state.targets.includes(key)){
+      return "5px solid green";
+    } if(this.state.invalidTargets.includes(key)) {
+      return "5px solid red";
+    }
+    return "";
+  },
+
   render() {
     const {order, lastPress, isPressed, mouse} = this.state;
     return (
-      <div className="draggable-balls">
+      <div className="eval-container">
         {order.map((_, key) => {
           let style;
           let x;
@@ -109,22 +154,26 @@ const DraggableBalls = React.createClass({
             };
           }
           return (
-            <Motion key={key} style={style}>
-              {({translateX, translateY, scale, boxShadow}) =>
-                <div
-                  onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
-                  onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
-                  className="draggable-balls-ball"
-                  style={{
-                    backgroundColor: allColors[key],
-                    WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                    transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                    zIndex: key === lastPress ? 99 : visualPosition,
-                    boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
-                  }}
-                />
-              }
-            </Motion>
+            <div className="eval-arg">
+              <Motion key={key} style={style}>
+                {({translateX, translateY, scale, boxShadow}) =>
+                  <div
+
+                    onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
+                    onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
+                    className="arg"
+                    style={{
+                      backgroundColor: allColors[key],
+                      WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                      transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                      zIndex: key === lastPress ? 99 : visualPosition,
+                      boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
+                      border: `${this.borderStyle(key)}`,
+                    }}
+                  />
+                }
+              </Motion>
+            </div>
           );
         })}
       </div>
@@ -132,4 +181,4 @@ const DraggableBalls = React.createClass({
   },
 });
 
-export default DraggableBalls;
+export default BlockComputation;
