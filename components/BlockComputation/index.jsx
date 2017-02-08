@@ -45,7 +45,7 @@ const BlockComputation = React.createClass({
       //   },
       //   right: 4
       // }
-      computation: [[[0,1],2],3]
+      computation: [[[0, 1], 2], 3]
     };
   },
 
@@ -79,11 +79,11 @@ const BlockComputation = React.createClass({
     let self = this;
     let targets = []
     array.forEach(function (element) {
-      if(targetKey === element) {
+      if (targetKey === element) {
         // we found the target key so add everything in this array as a target
         array.forEach(function (candidateKey) {
-          if(element !== candidateKey){
-            if(typeof element ==='number'){
+          if (element !== candidateKey) {
+            if (typeof element === 'number') {
               targets.push(candidateKey);
             } else {
               targets.push(_.flattenDeep(candidateKey));
@@ -92,7 +92,7 @@ const BlockComputation = React.createClass({
         })
       }
       else {
-        if (Array.isArray(element)){
+        if (Array.isArray(element)) {
           targets = targets.concat(self.findTargets(targetKey, element));
         }
       }
@@ -110,7 +110,7 @@ const BlockComputation = React.createClass({
       delta: [pageX - pressX, pageY - pressY],
       mouse: [pressX, pressY],
       targets: newTargets,
-      invalidTargets: _.difference(this.state.order, newTargets),
+      invalidTargets: _.difference(this.state.order, newTargets.concat([key])),
     });
   },
 
@@ -119,66 +119,144 @@ const BlockComputation = React.createClass({
   },
 
   borderStyle(key) {
-    if(this.state.targets.includes(key)){
-      return "5px solid green";
-    } if(this.state.invalidTargets.includes(key)) {
-      return "5px solid red";
+    if (this.state.isPressed) {
+      if (this.state.targets.includes(key)) {
+        return "5px solid green";
+      }
+      if (this.state.invalidTargets.includes(key)) {
+        return "5px solid red";
+      }
     }
     return "";
   },
 
-  render() {
-    const {order, lastPress, isPressed, mouse} = this.state;
-    return (
-      <div className="eval-container">
-        {order.map((_, key) => {
-          let style;
-          let x;
-          let y;
-          const visualPosition = order.indexOf(key);
-          if (key === lastPress && isPressed) {
-            [x, y] = mouse;
-            style = {
-              translateX: x,
-              translateY: y,
-              scale: spring(1.2, springSetting1),
-              boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
-            };
-          } else {
-            [x, y] = layout[visualPosition];
-            style = {
-              translateX: spring(x, springSetting2),
-              translateY: spring(y, springSetting2),
-              scale: spring(1, springSetting1),
-              boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
-            };
-          }
-          return (
-            <div className="eval-arg">
-              <Motion key={key} style={style}>
-                {({translateX, translateY, scale, boxShadow}) =>
-                  <div
+  arrayToDiv(value, valueIndex){
+    let self = this;
+    if (Array.isArray(value)) {
+      return (
+        <div className="eval-arg">
+          {value.map((element, elementIndex) => self.arrayToDiv(element, elementIndex))}
+        </div>
+      )
+    } else {
+      const {order, lastPress, isPressed, mouse} = this.state;
+      let x;
+      let y;
+      let translateX;
+      let translateY;
+      let scale;
+      let boxShadow;
+      let style;
+      const visualPosition = order.indexOf(value);
+      if (value === lastPress && isPressed) {
+        [x, y] = mouse;
+        translateX = x;
+        translateY = y;
+        scale = spring(1.2, springSetting1);
+        boxShadow = spring((x - (3 * width - 50) / 2) / 15, springSetting1);
+        style = {
+          translateX: x,
+          translateY: y,
+          scale: spring(1.2, springSetting1),
+          boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
 
-                    onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
-                    onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
-                    className="arg"
-                    style={{
-                      backgroundColor: allColors[key],
-                      WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                      transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                      zIndex: key === lastPress ? 99 : visualPosition,
-                      boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
-                      border: `${this.borderStyle(key)}`,
-                    }}
-                  />
-                }
-              </Motion>
+        }
+      } else {
+        [x, y] = [valueIndex*width,0];
+        // [x, y] = layout[visualPosition];
+        translateX = spring(x, springSetting2);
+        translateY = spring(y, springSetting2);
+        scale = spring(1, springSetting1);
+        boxShadow = spring((x - (3 * width - 50) / 2) / 15, springSetting1);
+        style = {
+          translateX: spring(x, springSetting2),
+          translateY: spring(y, springSetting2),
+          scale: spring(1, springSetting1),
+          boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1)
+        }
+      }
+      return (
+        <Motion key={value} style={style}>
+          {({translateX, translateY, scale, boxShadow}) =>
+            <div className="arg"
+                 onMouseDown={self.handleMouseDown.bind(null, value, [x, y])}
+                 onTouchStart={self.handleTouchStart.bind(null, value, [x, y])}
+                 style={{
+                   backgroundColor: allColors[value],
+                   WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                   transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                   zIndex: value === lastPress ? 99 : visualPosition,
+                   boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
+                   border: `${self.borderStyle(value)}`,
+                 }}
+            >
+              {value}
             </div>
-          );
-        })}
-      </div>
-    );
+          }
+        </Motion>
+      );
+    }
   },
+
+  render()
+  {
+    return this.arrayToDiv(this.state.computation);
+
+    // const {order, lastPress, isPressed, mouse, computation} = this.state;
+    // return (
+    //   <div className="eval-container">
+    //
+    //
+    //     <div className="eval-arg">
+    //       {order.map((_, key) => {
+    //         let style;
+    //         let x;
+    //         let y;
+    //         const visualPosition = order.indexOf(key);
+    //         if (key === lastPress && isPressed) {
+    //           [x, y] = mouse;
+    //           style = {
+    //             translateX: x,
+    //             translateY: y,
+    //             scale: spring(1.2, springSetting1),
+    //             boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
+    //
+    //           };
+    //         } else {
+    //           [x, y] = layout[visualPosition];
+    //           style = {
+    //             translateX: spring(x, springSetting2),
+    //             translateY: spring(y, springSetting2),
+    //             scale: spring(1, springSetting1),
+    //             boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
+    //           };
+    //         }
+    //         return (
+    //           <Motion key={key} style={style}>
+    //             {({translateX, translateY, scale, boxShadow}) =>
+    //               <div
+    //
+    //                 onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
+    //                 onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
+    //                 className="arg"
+    //                 style={{
+    //                   backgroundColor: allColors[key],
+    //                   WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+    //                   transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+    //                   zIndex: key === lastPress ? 99 : visualPosition,
+    //                   boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
+    //                   border: `${this.borderStyle(key)}`,
+    //                 }}
+    //               />
+    //             }
+    //           </Motion>
+    //         );
+    //       })}
+    //     </div>
+    //   </div>
+    // );
+  }
+  ,
 });
 
 export default BlockComputation;

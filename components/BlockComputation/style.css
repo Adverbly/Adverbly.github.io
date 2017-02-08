@@ -5,45 +5,12 @@
     -moz-user-select: none;
     user-select: none;
 }
-.draggable-balls-outer {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    display: -webkit-flex;
-    -webkit-justify-content: center;
-    -webkit-align-items: center;
-
-
-    height: 100%;
-    padding: 10px 1px;
-    margin: 10px 1px;
-    display: inline-flex;
-    width: auto;
-    border: 1px solid blue;
-}
-.draggable-balls {
-    width: 360px;
-    height: 220px;
-}
-.draggable-balls-ball {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-}
-.draggable-balls-container {
-    position: absolute;
-    border: 1px solid black;
-    width: 30px;
-    height: 30px;
-}
-
 .eval-container {
     width: 360px;
     height: 220px;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    /*justify-content: center;*/
     /*height:100%;*/
     /*width: auto;*/
     border: 1px solid blue;
@@ -51,13 +18,14 @@
 
 .eval-arg {
     padding: 10px 1px;
-    margin: 10px 1px;
     /*height:100%;*/
     /*width: auto;*/
     border: 1px solid blue;
     /*position: absolute;*/
-    width: 50px;
-    height: 50px;
+    width: 80%;
+    height: 50%;
+    /*margin: 10px 50px;*/
+    justify-content: initial;
 }
 
 .arg{
@@ -65,5 +33,5 @@
     width: 30px;
     height: 30px;
     margin: 10px;
-    position: absolute;
+    /*position: absolute;*/
 }
