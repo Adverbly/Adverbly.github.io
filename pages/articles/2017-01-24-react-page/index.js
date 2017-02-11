@@ -12,15 +12,6 @@ class Post extends React.Component {
         <h1>{this.props.route.page.data.title}</h1>
         <p>Greetings from React</p>
         <p>Visualization to come...</p>
-        <div className="draggable-balls-outer">
-          <div id="content">
-            <DraggableBalls />
-          </div>
-        </div>
-        <p>If you're picky, here have a date picker</p>
-        <DatePicker />
-
-        <p>If you're picky, here have a date picker</p>
         <div id="content">
           <BlockComputation />
         </div>

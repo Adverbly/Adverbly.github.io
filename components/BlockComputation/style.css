@@ -10,10 +10,7 @@
     height: 220px;
     display: inline-flex;
     align-items: center;
-    /*justify-content: center;*/
-    /*height:100%;*/
-    /*width: auto;*/
-    border: 1px solid blue;
+    box-shadow: 1px 0px 5px 2px rgba(0,0,0,0.5);
 }
 
 .swapButton:hover {
@@ -26,14 +23,13 @@
 
 .eval-arg {
     padding: 10px 1px;
-    /*height:100%;*/
-    /*width: auto;*/
-    border: 1px solid blue;
-    /*position: absolute;*/
     width: inherit;
-    height: 50%;
-    /*margin: 10px 50px;*/
+    height: 70%;
     justify-content: initial;
+    box-shadow: 1px 0px 5px 2px rgba(0,0,0,0.5);
+    display: inline-flex;
+    align-items: center;
+    -webkit-box-align: center;
 }
 
 .arg{
@@ -41,5 +37,4 @@
     width: 30px;
     height: 30px;
     margin: 10px;
-    /*position: absolute;*/
 }

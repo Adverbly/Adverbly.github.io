@@ -17,35 +17,72 @@ function reinsert(arr, from, to) {
 function clamp(n, min, max) {
   return Math.max(Math.min(n, max), min);
 }
-
+let numTerms = 4
 const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA'];
-const [count, width, height, numArgs] = [4, 30, 0, 4];
+const [count, width, height] = [numTerms, 30, 0];
 // indexed by visual position
 const layout = range(count).map(n => {
   return [width * n, height];
 });
+let computations = bestowIds(associativeGroups(numTerms))
+
+function associativeGroups(count) {
+  if (count == 1) {
+    return [1]
+  }
+  let permutations = []
+  for (let split = 1; split < count; split++) {
+    let genLeft = associativeGroups(split)
+    let genRight = associativeGroups(count - split)
+    permutations = permutations.concat(cartesianProduct(genLeft, genRight))
+  }
+  return permutations
+}
+
+function bestowIds(array) {
+  for (let i = 0; i < array.length; i++) {
+    mapValuesToCount(array[i], {count: 0})
+  }
+  return array
+}
+
+function mapValuesToCount(value, counter) {
+  for (let i = 0; i < value.length; i++) {
+    if (Array.isArray(value[i])) {
+      mapValuesToCount(value[i], counter)
+    }
+    else {
+      counter.count++
+      value[i] = counter.count
+    }
+  }
+  return value
+}
+
+function cartesianProduct() {
+  return _.reduce(arguments, function (a, b) {
+    return _.flatten(_.map(a, function (x) {
+      return _.map(b, function (y) {
+        return x.concat([y]);
+      });
+    }), true);
+  }, [[]]);
+}
 
 const BlockComputation = React.createClass({
+
   getInitialState() {
     return {
       mouse: [0, 0],
       delta: [0, 0], // difference between mouse and circle pos, for dragging
       lastPress: null, // key of the last pressed component
       isPressed: false,
-      order: range(count), // index: visual position. value: component key/id
+      order: range(numTerms), // index: visual position. value: component key/id
       targets: [],
       invalidTargets: [],
-      // computation: {
-      //   left: {
-      //     left: {
-      //       left: 1,
-      //       right: 2
-      //     },
-      //     right: 3
-      //   },
-      //   right: 4
-      // }
-      computation: [[[0, 1], 2], 3]
+      computation: _.cloneDeep(computations[0]),
+      structureKey: 0,
+      argSequence: range(1,numTerms + 1) // 1,2,3,4 for for 4 terms
     };
   },
 
@@ -101,6 +138,18 @@ const BlockComputation = React.createClass({
     return _.flattenDeep(targets);
   },
 
+  mapValuesToArgSeq(value, counter) {
+    for (let i = 0; i < value.length; i++) {
+      if (Array.isArray(value[i])) {
+        self.mapValuesToArgSeq(value[i], counter)
+      }
+      else {
+        value[i] = this.state.argSequence[counter.count]
+        counter.count++
+      }
+    }
+  },
+
   handleMouseDown(key, [pressX, pressY], {pageX, pageY}) {
     let newTargets = this.findTargets(key, this.state.computation);
 
@@ -118,18 +167,6 @@ const BlockComputation = React.createClass({
     this.setState({isPressed: false, delta: [0, 0]});
   },
 
-  handleSwap(computationPath) {
-    let traversal = this.state.computation
-    for (let i = 0, len = computationPath.length; i < len; i++) {
-      traversal = traversal[computationPath[i]]
-    }
-    //swap first and last elements
-    let first = traversal.shift()
-    traversal.unshift(traversal.pop())
-    traversal.push(first)
-    this.setState({computation: this.state.computation});
-  },
-
   borderStyle(key) {
     if (this.state.isPressed) {
       if (this.state.targets.includes(key)) {
@@ -142,26 +179,83 @@ const BlockComputation = React.createClass({
     return "";
   },
 
+  findKeyOfStructure(structure) {
+    for (let i = 0; i < computations.length; i++) {
+      if(_.isEqual(structure, computations[i])){
+        return i
+      }
+    }
+    return "SHIT"
+  },
+
+  deepMap(obj, iterator, context) {
+    let self = this;
+    return _.transform(obj, function (result, val, key) {
+      result[key] = _.isObject(val) /*&& !_.isDate(val)*/ ?
+        self.deepMap(val, iterator, context) :
+        iterator.call(context, val, key, obj);
+    });
+  },
+
+  computationHtml() {
+    let self = this
+    return (
+      <div>
+        <div onClick={function () {
+          if (self.state.structureKey < computations.length - 1) {
+            let newVal = self.state.structureKey + 1
+            self.setState({
+              computation: _.cloneDeep(computations[newVal]),
+              structureKey: newVal,
+              argSequence: _.flattenDeep(computations[newVal])
+            })
+          }
+        }}>
+          left
+        </div>
+        <div onClick={function () {
+          if (self.state.structureKey > 0) {
+            let newVal = self.state.structureKey - 1
+            self.setState({
+              computation: _.cloneDeep(computations[newVal]),
+              structureKey: newVal,
+              argSequence: _.flattenDeep(computations[newVal])
+            })
+          }
+        }}>
+          right
+        </div>
+        {self.arrayToDiv(self.state.computation, [])}
+        <p>cKey - {self.state.structureKey}</p>
+        <p>c - {self.state.computation}</p>
+        <p>order - {self.state.order}</p>
+        <p>argSeq - {self.state.argSequence}</p>
+      </div>
+    )
+  },
+
   arrayToDiv(value, path){
     let self = this;
-    let swap_key = "swap_button";
+    let swapElement = "swap_button";
     if (Array.isArray(value)) {
 
       let interlacedItems = range(2 * value.length - 1).map((index) => {
-        return index % 2 == 0 ? value[index / 2] : swap_key
+        return index % 2 == 0 ? value[index / 2] : swapElement
       })
       return (
         <div className="eval-arg">
           {
-            interlacedItems.map((element, elementIndex) => self.arrayToDiv(element, path.concat(Math.floor(elementIndex/2))))
+            interlacedItems.map((element, elementIndex) => self.arrayToDiv(element, path.concat(Math.floor(elementIndex / 2))))
           }
         </div>
       )
     } else {
-      if (value === swap_key) {
+      if (value === swapElement) {
         return <div className="swapButton"
                     onClick={
                       function () {
+                        //modify the computation by swapping the terms
+                        //traverse the computation to find the swapped array
                         let traversal = self.state.computation
                         for (let i = 0; i < path.length - 1; i++) {
                           traversal = traversal[path[i]]
@@ -170,17 +264,15 @@ const BlockComputation = React.createClass({
                         let first = traversal.shift()
                         traversal.unshift(traversal.pop())
                         traversal.push(first)
-                        self.setState({computation: self.state.computation});
+                        // find the new arg sequence after the swap
+                        let newArgSeq = _.flattenDeep(self.state.computation)
+                        // find the new structureKey after the swap
+                        let newStructureKey = self.findKeyOfStructure(mapValuesToCount(_.cloneDeep(self.state.computation), {count:0}))
+
+                        {/*self.walkIds(self.state.computation, {count: 0})*/}
+                        self.setState({computation: self.state.computation, argSequence: newArgSeq, structureKey: newStructureKey});
                       }
                     }
-                    style={{
-                      backgroundColor: allColors[value],
-                      WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                      transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                      zIndex: value === lastPress ? 99 : visualPosition,
-                      boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
-                      border: `${self.borderStyle(value)}`,
-                    }}
         >{'\u003C - \u003E'}</div>
       }
       const {order, lastPress, isPressed, mouse} = this.state;
@@ -191,6 +283,7 @@ const BlockComputation = React.createClass({
       let scale;
       let boxShadow;
       let style;
+      // const visualPosition = order.indexOf(value);
       const visualPosition = order.indexOf(value);
       if (value === lastPress && isPressed) {
         [x, y] = mouse;
@@ -226,10 +319,10 @@ const BlockComputation = React.createClass({
                  onMouseDown={self.handleMouseDown.bind(null, value, [x, y])}
                  onTouchStart={self.handleTouchStart.bind(null, value, [x, y])}
                  style={{
-                   backgroundColor: allColors[value],
+                   backgroundColor: allColors[visualPosition],
                    WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
                    transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                   zIndex: value === lastPress ? 99 : visualPosition,
+                   zIndex: value,
                    boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
                    border: `${self.borderStyle(value)}`,
                  }}
@@ -244,61 +337,7 @@ const BlockComputation = React.createClass({
 
   render()
   {
-    return this.arrayToDiv(this.state.computation, []);
-
-    // const {order, lastPress, isPressed, mouse, computation} = this.state;
-    // return (
-    //   <div className="eval-container">
-    //
-    //
-    //     <div className="eval-arg">
-    //       {order.map((_, key) => {
-    //         let style;
-    //         let x;
-    //         let y;
-    //         const visualPosition = order.indexOf(key);
-    //         if (key === lastPress && isPressed) {
-    //           [x, y] = mouse;
-    //           style = {
-    //             translateX: x,
-    //             translateY: y,
-    //             scale: spring(1.2, springSetting1),
-    //             boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
-    //
-    //           };
-    //         } else {
-    //           [x, y] = layout[visualPosition];
-    //           style = {
-    //             translateX: spring(x, springSetting2),
-    //             translateY: spring(y, springSetting2),
-    //             scale: spring(1, springSetting1),
-    //             boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
-    //           };
-    //         }
-    //         return (
-    //           <Motion key={key} style={style}>
-    //             {({translateX, translateY, scale, boxShadow}) =>
-    //               <div
-    //
-    //                 onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
-    //                 onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
-    //                 className="arg"
-    //                 style={{
-    //                   backgroundColor: allColors[key],
-    //                   WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-    //                   transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-    //                   zIndex: key === lastPress ? 99 : visualPosition,
-    //                   boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
-    //                   border: `${this.borderStyle(key)}`,
-    //                 }}
-    //               />
-    //             }
-    //           </Motion>
-    //         );
-    //       })}
-    //     </div>
-    //   </div>
-    // );
+    return this.computationHtml(this.state.computation);
   }
   ,
 });

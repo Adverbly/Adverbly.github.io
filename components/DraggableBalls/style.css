@@ -23,7 +23,7 @@
     border: 1px solid blue;
 }
 .draggable-balls {
-    width: 360px;
+    width: 3600px;
     height: 220px;
 }
 .draggable-balls-ball {
@@ -36,22 +36,4 @@
     border: 1px solid black;
     width: 30px;
     height: 30px;
-}
-
-.eval-arg {
-    height: 100%;
-    padding: 10px 1px;
-    margin: 10px 1px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    border: 1px solid blue;
-}
-
-.arg{
-    background-color: tomato;
-    width: 30px;
-    height: 30px;
-    margin: 10px;
 }
