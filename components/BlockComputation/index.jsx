@@ -19,7 +19,7 @@ function clamp(n, min, max) {
 }
 
 const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA'];
-const [count, width, height, numArgs] = [4, 70, 0, 4];
+const [count, width, height, numArgs] = [4, 30, 0, 4];
 // indexed by visual position
 const layout = range(count).map(n => {
   return [width * n, height];
@@ -118,6 +118,18 @@ const BlockComputation = React.createClass({
     this.setState({isPressed: false, delta: [0, 0]});
   },
 
+  handleSwap(computationPath) {
+    let traversal = this.state.computation
+    for (let i = 0, len = computationPath.length; i < len; i++) {
+      traversal = traversal[computationPath[i]]
+    }
+    //swap first and last elements
+    let first = traversal.shift()
+    traversal.unshift(traversal.pop())
+    traversal.push(first)
+    this.setState({computation: this.state.computation});
+  },
+
   borderStyle(key) {
     if (this.state.isPressed) {
       if (this.state.targets.includes(key)) {
@@ -130,15 +142,47 @@ const BlockComputation = React.createClass({
     return "";
   },
 
-  arrayToDiv(value, valueIndex){
+  arrayToDiv(value, path){
     let self = this;
+    let swap_key = "swap_button";
     if (Array.isArray(value)) {
+
+      let interlacedItems = range(2 * value.length - 1).map((index) => {
+        return index % 2 == 0 ? value[index / 2] : swap_key
+      })
       return (
         <div className="eval-arg">
-          {value.map((element, elementIndex) => self.arrayToDiv(element, elementIndex))}
+          {
+            interlacedItems.map((element, elementIndex) => self.arrayToDiv(element, path.concat(Math.floor(elementIndex/2))))
+          }
         </div>
       )
     } else {
+      if (value === swap_key) {
+        return <div className="swapButton"
+                    onClick={
+                      function () {
+                        let traversal = self.state.computation
+                        for (let i = 0; i < path.length - 1; i++) {
+                          traversal = traversal[path[i]]
+                        }
+                        //swap first and last elements
+                        let first = traversal.shift()
+                        traversal.unshift(traversal.pop())
+                        traversal.push(first)
+                        self.setState({computation: self.state.computation});
+                      }
+                    }
+                    style={{
+                      backgroundColor: allColors[value],
+                      WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                      transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                      zIndex: value === lastPress ? 99 : visualPosition,
+                      boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
+                      border: `${self.borderStyle(value)}`,
+                    }}
+        >{'\u003C - \u003E'}</div>
+      }
       const {order, lastPress, isPressed, mouse} = this.state;
       let x;
       let y;
@@ -159,18 +203,18 @@ const BlockComputation = React.createClass({
           translateY: y,
           scale: spring(1.2, springSetting1),
           boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
-
         }
       } else {
-        [x, y] = [valueIndex*width,0];
+        // [x, y] = [valueIndex*width,0];
+        [x, y] = [0, 0];
         // [x, y] = layout[visualPosition];
-        translateX = spring(x, springSetting2);
-        translateY = spring(y, springSetting2);
+        // translateX = spring(x, springSetting2);
+        // translateY = spring(y, springSetting2);
         scale = spring(1, springSetting1);
         boxShadow = spring((x - (3 * width - 50) / 2) / 15, springSetting1);
         style = {
-          translateX: spring(x, springSetting2),
-          translateY: spring(y, springSetting2),
+          // translateX: spring(x, springSetting2),
+          // translateY: spring(y, springSetting2),
           scale: spring(1, springSetting1),
           boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1)
         }
@@ -200,7 +244,7 @@ const BlockComputation = React.createClass({
 
   render()
   {
-    return this.arrayToDiv(this.state.computation);
+    return this.arrayToDiv(this.state.computation, []);
 
     // const {order, lastPress, isPressed, mouse, computation} = this.state;
     // return (

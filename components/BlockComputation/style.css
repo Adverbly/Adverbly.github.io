@@ -16,13 +16,21 @@
     border: 1px solid blue;
 }
 
+.swapButton:hover {
+    color: black;
+}
+
+.swapButton {
+    color: rgba(34, 34, 34, 0.43);;
+}
+
 .eval-arg {
     padding: 10px 1px;
     /*height:100%;*/
     /*width: auto;*/
     border: 1px solid blue;
     /*position: absolute;*/
-    width: 80%;
+    width: inherit;
     height: 50%;
     /*margin: 10px 50px;*/
     justify-content: initial;
