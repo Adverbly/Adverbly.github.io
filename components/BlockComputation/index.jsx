@@ -17,7 +17,7 @@ function reinsert(arr, from, to) {
 function clamp(n, min, max) {
   return Math.max(Math.min(n, max), min);
 }
-let numTerms = 4
+let numTerms = 6
 const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA'];
 const [count, width, height] = [numTerms, 30, 0];
 // indexed by visual position
@@ -141,13 +141,14 @@ const BlockComputation = React.createClass({
   mapValuesToArgSeq(value, counter) {
     for (let i = 0; i < value.length; i++) {
       if (Array.isArray(value[i])) {
-        self.mapValuesToArgSeq(value[i], counter)
+        this.mapValuesToArgSeq(value[i], counter)
       }
       else {
         value[i] = this.state.argSequence[counter.count]
         counter.count++
       }
     }
+    return value
   },
 
   handleMouseDown(key, [pressX, pressY], {pageX, pageY}) {
@@ -179,7 +180,7 @@ const BlockComputation = React.createClass({
     return "";
   },
 
-  findKeyOfStructure(structure) {
+   findKeyOfStructure(structure) {
     for (let i = 0; i < computations.length; i++) {
       if(_.isEqual(structure, computations[i])){
         return i
@@ -204,11 +205,10 @@ const BlockComputation = React.createClass({
         <div onClick={function () {
           if (self.state.structureKey < computations.length - 1) {
             let newVal = self.state.structureKey + 1
+            let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
             self.setState({
-              computation: _.cloneDeep(computations[newVal]),
-              structureKey: newVal,
-              argSequence: _.flattenDeep(computations[newVal])
-            })
+              computation: newComputation,
+              structureKey: newVal})
           }
         }}>
           left
@@ -216,11 +216,10 @@ const BlockComputation = React.createClass({
         <div onClick={function () {
           if (self.state.structureKey > 0) {
             let newVal = self.state.structureKey - 1
+            let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
             self.setState({
-              computation: _.cloneDeep(computations[newVal]),
-              structureKey: newVal,
-              argSequence: _.flattenDeep(computations[newVal])
-            })
+              computation: newComputation,
+              structureKey: newVal})
           }
         }}>
           right
