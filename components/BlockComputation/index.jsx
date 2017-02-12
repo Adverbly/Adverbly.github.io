@@ -5,21 +5,9 @@ import './style.css'
 import _ from 'lodash';
 
 const springSetting1 = {stiffness: 180, damping: 10};
-const springSetting2 = {stiffness: 120, damping: 17};
-function reinsert(arr, from, to) {
-  const _arr = arr.slice(0);
-  const val = _arr[from];
-  _arr.splice(from, 1);
-  _arr.splice(to, 0, val);
-  return _arr;
-}
-
-function clamp(n, min, max) {
-  return Math.max(Math.min(n, max), min);
-}
 
 let numTerms = 6
-const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA'];
+const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA', "#47ff55gi", "#d247ff"];
 const width = 30;
 let computations = bestowIds(associativeGroups(numTerms))
 
@@ -83,32 +71,6 @@ const BlockComputation = React.createClass({
     };
   },
 
-  componentDidMount() {
-    window.addEventListener('touchmove', this.handleTouchMove);
-    window.addEventListener('touchend', this.handleMouseUp);
-    window.addEventListener('mousemove', this.handleMouseMove);
-    window.addEventListener('mouseup', this.handleMouseUp);
-  },
-
-  handleTouchStart(key, pressLocation, e) {
-    this.handleMouseDown(key, pressLocation, e.touches[0]);
-  },
-
-  handleTouchMove(e) {
-    e.preventDefault();
-    this.handleMouseMove(e.touches[0]);
-  },
-
-  handleMouseMove({pageX, pageY}) {
-    const {order, lastPress, isPressed, delta: [dx, dy]} = this.state;
-    if (isPressed) {
-      const mouse = [pageX - dx, pageY - dy];
-      const index = clamp(Math.floor(mouse[0] / width), 0, 3);
-      const newOrder = reinsert(order, order.indexOf(lastPress), index);
-      this.setState({mouse: mouse, order: newOrder});
-    }
-  },
-
   findTargets(targetKey, array) {
     let self = this;
     let targets = []
@@ -162,18 +124,6 @@ const BlockComputation = React.createClass({
 
   handleMouseUp() {
     this.setState({isPressed: false, delta: [0, 0]});
-  },
-
-  borderStyle(key) {
-    if (this.state.isPressed) {
-      if (this.state.targets.includes(key)) {
-        return "5px solid green";
-      }
-      if (this.state.invalidTargets.includes(key)) {
-        return "5px solid red";
-      }
-    }
-    return "";
   },
 
   findKeyOfStructure(structure) {
@@ -231,10 +181,6 @@ const BlockComputation = React.createClass({
         <div>
           {self.associativeControls(self.state.structureKey)}
           {self.arrayToDiv(self.state.computation, [])}
-          {/*<p>cKey - {self.state.structureKey}</p>*/}
-          {/*<p>c - {self.state.computation}</p>*/}
-          {/*<p>order - {self.state.order}</p>*/}
-          {/*<p>argSeq - {self.state.argSequence}</p>*/}
         </div>
       )
     }
@@ -242,10 +188,6 @@ const BlockComputation = React.createClass({
       return (
         <div>
           {self.arrayToDiv(self.state.computation, [])}
-          {/*<p>cKey - {self.state.structureKey}</p>*/}
-          {/*<p>c - {self.state.computation}</p>*/}
-          {/*<p>order - {self.state.order}</p>*/}
-          {/*<p>argSeq - {self.state.argSequence}</p>*/}
         </div>
       )
     }
@@ -266,7 +208,7 @@ const BlockComputation = React.createClass({
           }
         </div>
       )
-    } else if (value == swapElement && self.props.commutes) {
+    } else if (value == swapElement && !self.props.commutes) {
       return null
     }
     else {
@@ -296,59 +238,25 @@ const BlockComputation = React.createClass({
                     }
         >{'\u003C - \u003E'}</div>
       }
-      const {order, lastPress, isPressed, mouse} = this.state;
-      let x;
-      let y;
-      let translateX;
-      let translateY;
-      let scale;
+      const order = this.state.order;
       let boxShadow;
       let style;
-      // const visualPosition = order.indexOf(value);
       const visualPosition = order.indexOf(value);
-      if (value === lastPress && isPressed) {
-        [x, y] = mouse;
-        translateX = x;
-        translateY = y;
-        scale = spring(1.2, springSetting1);
-        boxShadow = spring((x - (3 * width - 50) / 2) / 15, springSetting1);
-        style = {
-          translateX: x,
-          translateY: y,
-          scale: spring(1.2, springSetting1),
-          boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
-        }
-      } else {
-        // [x, y] = [valueIndex*width,0];
-        [x, y] = [0, 0];
-        // [x, y] = layout[visualPosition];
-        // translateX = spring(x, springSetting2);
-        // translateY = spring(y, springSetting2);
-        scale = spring(1, springSetting1);
-        boxShadow = spring((x - (3 * width - 50) / 2) / 15, springSetting1);
-        style = {
-          // translateX: spring(x, springSetting2),
-          // translateY: spring(y, springSetting2),
-          scale: spring(1, springSetting1),
-          boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1)
-        }
+      boxShadow = spring(((3 * width - 50) / 2) / 15, springSetting1);
+      style = {
+        scale: spring(1, springSetting1),
+        boxShadow: spring(((3 * width - 50) / 2) / 15, springSetting1)
       }
       return (
         <Motion key={value} style={style}>
-          {({translateX, translateY, scale, boxShadow}) =>
+          {({boxShadow}) =>
             <div className="arg"
-                 onMouseDown={self.handleMouseDown.bind(null, value, [x, y])}
-                 onTouchStart={self.handleTouchStart.bind(null, value, [x, y])}
                  style={{
                    backgroundColor: allColors[visualPosition],
-                   WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                   transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
                    zIndex: value,
-                   boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
-                   border: `${self.borderStyle(value)}`,
+                   boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`
                  }}
             >
-              {value}
             </div>
           }
         </Motion>
