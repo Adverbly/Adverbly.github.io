@@ -17,13 +17,10 @@ function reinsert(arr, from, to) {
 function clamp(n, min, max) {
   return Math.max(Math.min(n, max), min);
 }
+
 let numTerms = 6
 const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA'];
-const [count, width, height] = [numTerms, 30, 0];
-// indexed by visual position
-const layout = range(count).map(n => {
-  return [width * n, height];
-});
+const width = 30;
 let computations = bestowIds(associativeGroups(numTerms))
 
 function associativeGroups(count) {
@@ -82,7 +79,7 @@ const BlockComputation = React.createClass({
       invalidTargets: [],
       computation: _.cloneDeep(computations[0]),
       structureKey: 0,
-      argSequence: range(1,numTerms + 1) // 1,2,3,4 for for 4 terms
+      argSequence: range(1, numTerms + 1) // 1,2,3,4 for for 4 terms
     };
   },
 
@@ -153,7 +150,6 @@ const BlockComputation = React.createClass({
 
   handleMouseDown(key, [pressX, pressY], {pageX, pageY}) {
     let newTargets = this.findTargets(key, this.state.computation);
-
     this.setState({
       lastPress: key,
       isPressed: true,
@@ -180,9 +176,9 @@ const BlockComputation = React.createClass({
     return "";
   },
 
-   findKeyOfStructure(structure) {
+  findKeyOfStructure(structure) {
     for (let i = 0; i < computations.length; i++) {
-      if(_.isEqual(structure, computations[i])){
+      if (_.isEqual(structure, computations[i])) {
         return i
       }
     }
@@ -198,39 +194,61 @@ const BlockComputation = React.createClass({
     });
   },
 
+  associativeControls(){
+    let self = this;
+    return <div>
+      <div onClick={function () {
+        if (self.state.structureKey < computations.length - 1) {
+          let newVal = self.state.structureKey + 1
+          let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
+          self.setState({
+            computation: newComputation,
+            structureKey: newVal
+          })
+        }
+      }}>
+        left
+      </div>
+      <div onClick={function () {
+        if (self.state.structureKey > 0) {
+          let newVal = self.state.structureKey - 1
+          let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
+          self.setState({
+            computation: newComputation,
+            structureKey: newVal
+          })
+        }
+      }}>
+        right
+      </div>
+    </div>
+  },
+
   computationHtml() {
     let self = this
-    return (
-      <div>
-        <div onClick={function () {
-          if (self.state.structureKey < computations.length - 1) {
-            let newVal = self.state.structureKey + 1
-            let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
-            self.setState({
-              computation: newComputation,
-              structureKey: newVal})
-          }
-        }}>
-          left
+    if (self.props.associative == true) {
+      return (
+        <div>
+          {self.associativeControls(self.state.structureKey)}
+          {self.arrayToDiv(self.state.computation, [])}
+          {/*<p>cKey - {self.state.structureKey}</p>*/}
+          {/*<p>c - {self.state.computation}</p>*/}
+          {/*<p>order - {self.state.order}</p>*/}
+          {/*<p>argSeq - {self.state.argSequence}</p>*/}
         </div>
-        <div onClick={function () {
-          if (self.state.structureKey > 0) {
-            let newVal = self.state.structureKey - 1
-            let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
-            self.setState({
-              computation: newComputation,
-              structureKey: newVal})
-          }
-        }}>
-          right
+      )
+    }
+    else {
+      return (
+        <div>
+          {self.arrayToDiv(self.state.computation, [])}
+          {/*<p>cKey - {self.state.structureKey}</p>*/}
+          {/*<p>c - {self.state.computation}</p>*/}
+          {/*<p>order - {self.state.order}</p>*/}
+          {/*<p>argSeq - {self.state.argSequence}</p>*/}
         </div>
-        {self.arrayToDiv(self.state.computation, [])}
-        <p>cKey - {self.state.structureKey}</p>
-        <p>c - {self.state.computation}</p>
-        <p>order - {self.state.order}</p>
-        <p>argSeq - {self.state.argSequence}</p>
-      </div>
-    )
+      )
+    }
   },
 
   arrayToDiv(value, path){
@@ -248,7 +266,10 @@ const BlockComputation = React.createClass({
           }
         </div>
       )
-    } else {
+    } else if (value == swapElement && self.props.commutes) {
+      return null
+    }
+    else {
       if (value === swapElement) {
         return <div className="swapButton"
                     onClick={
@@ -266,9 +287,10 @@ const BlockComputation = React.createClass({
                         // find the new arg sequence after the swap
                         let newArgSeq = _.flattenDeep(self.state.computation)
                         // find the new structureKey after the swap
-                        let newStructureKey = self.findKeyOfStructure(mapValuesToCount(_.cloneDeep(self.state.computation), {count:0}))
+                        let newStructureKey = self.findKeyOfStructure(mapValuesToCount(_.cloneDeep(self.state.computation), {count: 0}))
 
-                        {/*self.walkIds(self.state.computation, {count: 0})*/}
+                        {/*self.walkIds(self.state.computation, {count: 0})*/
+                        }
                         self.setState({computation: self.state.computation, argSequence: newArgSeq, structureKey: newStructureKey});
                       }
                     }

@@ -13,7 +13,7 @@ class Post extends React.Component {
         <p>Greetings from React</p>
         <p>Visualization to come...</p>
         <div id="content">
-          <BlockComputation />
+          <BlockComputation associative={true} commutative={true}/>
         </div>
       </div>
     )
