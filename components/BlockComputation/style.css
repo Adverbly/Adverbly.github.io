@@ -18,7 +18,22 @@
 }
 
 .swapButton {
-    color: rgba(34, 34, 34, 0.43);;
+    color: rgba(34, 34, 34, 0.43);
+}
+
+.controls {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+.left-arrow {
+    margin-right: 50px
+}
+.right-arrow {
+    margin-left: 50px
+}
+.full-computation {
+    height: 200px;
 }
 
 .eval-arg {
@@ -32,9 +47,16 @@
     -webkit-box-align: center;
 }
 
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .arg{
     background-color: tomato;
     width: 30px;
     height: 30px;
     margin: 10px;
+    box-shadow: 1px 0px 5px 2px rgba(0,0,0,0.5);
 }

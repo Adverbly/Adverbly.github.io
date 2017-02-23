@@ -7,7 +7,7 @@ import _ from 'lodash';
 const springSetting1 = {stiffness: 180, damping: 10};
 
 let numTerms = 6
-const allColors = ['#EF767A', '#456990', '#EEB868', '#49BEAA', "#47ff55gi", "#d247ff"];
+const allColors = ["#91ee68", '#EF767A', '#456990', '#EEB868', '#49BEAA', "#47ff55gi", "#d247ff", ];
 const width = 30;
 let computations = bestowIds(associativeGroups(numTerms))
 
@@ -146,8 +146,8 @@ const BlockComputation = React.createClass({
 
   associativeControls(){
     let self = this;
-    return <div>
-      <div onClick={function () {
+    return <div className="controls">
+      <div className="left-arrow" onClick={function () {
         if (self.state.structureKey < computations.length - 1) {
           let newVal = self.state.structureKey + 1
           let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
@@ -157,9 +157,9 @@ const BlockComputation = React.createClass({
           })
         }
       }}>
-        left
+        <i className="fa fa-arrow-left"></i>
       </div>
-      <div onClick={function () {
+      <div className="right-arrow" onClick={function () {
         if (self.state.structureKey > 0) {
           let newVal = self.state.structureKey - 1
           let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
@@ -169,7 +169,7 @@ const BlockComputation = React.createClass({
           })
         }
       }}>
-        right
+        <i className="fa fa-arrow-right"></i>
       </div>
     </div>
   },
@@ -178,7 +178,7 @@ const BlockComputation = React.createClass({
     let self = this
     if (self.props.associative == true) {
       return (
-        <div>
+        <div className="full-computation">
           {self.associativeControls(self.state.structureKey)}
           {self.arrayToDiv(self.state.computation, [])}
         </div>
@@ -186,7 +186,7 @@ const BlockComputation = React.createClass({
     }
     else {
       return (
-        <div>
+        <div className="full-computation">
           {self.arrayToDiv(self.state.computation, [])}
         </div>
       )
@@ -202,10 +202,12 @@ const BlockComputation = React.createClass({
         return index % 2 == 0 ? value[index / 2] : swapElement
       })
       return (
-        <div className="eval-arg">
-          {
-            interlacedItems.map((element, elementIndex) => self.arrayToDiv(element, path.concat(Math.floor(elementIndex / 2))))
-          }
+        <div className="center">
+          <div className="eval-arg">
+            {
+              interlacedItems.map((element, elementIndex) => self.arrayToDiv(element, path.concat(Math.floor(elementIndex / 2))))
+            }
+          </div>
         </div>
       )
     } else if (value == swapElement && !self.props.commutes) {
@@ -233,15 +235,19 @@ const BlockComputation = React.createClass({
 
                         {/*self.walkIds(self.state.computation, {count: 0})*/
                         }
-                        self.setState({computation: self.state.computation, argSequence: newArgSeq, structureKey: newStructureKey});
+                        self.setState({
+                          computation: self.state.computation,
+                          argSequence: newArgSeq,
+                          structureKey: newStructureKey
+                        });
                       }
                     }
-        >{'\u003C - \u003E'}</div>
+        >{'\u00A0'}<i className="fa fa-exchange fa-2" aria-hidden="true"></i>{'\u00A0'}</div>
       }
       const order = this.state.order;
       let boxShadow;
       let style;
-      const visualPosition = order.indexOf(value);
+      const visualPosition = order.indexOf(value) + 1;
       boxShadow = spring(((3 * width - 50) / 2) / 15, springSetting1);
       style = {
         scale: spring(1, springSetting1),
@@ -254,7 +260,8 @@ const BlockComputation = React.createClass({
                  style={{
                    backgroundColor: allColors[visualPosition],
                    zIndex: value,
-                   boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`
+                   // boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`
+                   boxShadow: `1px 0px 5px 2px rgba(0,0,0,0.5);`
                  }}
             >
             </div>
