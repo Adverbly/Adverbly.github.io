@@ -6,10 +6,8 @@ import _ from 'lodash';
 
 const springSetting1 = {stiffness: 180, damping: 10};
 
-let numTerms = 6
 const allColors = ["#91ee68", '#EF767A', '#456990', '#EEB868', '#49BEAA', "#47ff55gi", "#d247ff", ];
 const width = 30;
-let computations = bestowIds(associativeGroups(numTerms))
 
 function associativeGroups(count) {
   if (count == 1) {
@@ -57,6 +55,9 @@ function cartesianProduct() {
 const BlockComputation = React.createClass({
 
   getInitialState() {
+    let numTerms = parseInt(this.props.numTerms);
+    let computations = bestowIds(associativeGroups(numTerms));
+    let structureKey = parseInt(this.props.structureKey);
     return {
       mouse: [0, 0],
       delta: [0, 0], // difference between mouse and circle pos, for dragging
@@ -65,9 +66,11 @@ const BlockComputation = React.createClass({
       order: range(numTerms), // index: visual position. value: component key/id
       targets: [],
       invalidTargets: [],
-      computation: _.cloneDeep(computations[0]),
-      structureKey: 0,
-      argSequence: range(1, numTerms + 1) // 1,2,3,4 for for 4 terms
+      computation: _.cloneDeep(computations[structureKey]),
+      structureKey: structureKey,
+      argSequence: range(1, numTerms + 1), // 1,2,3,4 for for 4 terms
+      numTerms:  numTerms,
+      computations:  computations
     };
   },
 
@@ -127,8 +130,8 @@ const BlockComputation = React.createClass({
   },
 
   findKeyOfStructure(structure) {
-    for (let i = 0; i < computations.length; i++) {
-      if (_.isEqual(structure, computations[i])) {
+    for (let i = 0; i < this.state.computations.length; i++) {
+      if (_.isEqual(structure, this.state.computations[i])) {
         return i
       }
     }
@@ -148,9 +151,9 @@ const BlockComputation = React.createClass({
     let self = this;
     return <div className="controls">
       <div className="left-arrow" onClick={function () {
-        if (self.state.structureKey < computations.length - 1) {
+        if (self.state.structureKey < self.state.computations.length - 1) {
           let newVal = self.state.structureKey + 1
-          let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
+          let newComputation = self.mapValuesToArgSeq(_.cloneDeep(self.state.computations[newVal]), {count: 0})
           self.setState({
             computation: newComputation,
             structureKey: newVal
@@ -162,7 +165,7 @@ const BlockComputation = React.createClass({
       <div className="right-arrow" onClick={function () {
         if (self.state.structureKey > 0) {
           let newVal = self.state.structureKey - 1
-          let newComputation = self.mapValuesToArgSeq(_.cloneDeep(computations[newVal]), {count: 0})
+          let newComputation = self.mapValuesToArgSeq(_.cloneDeep(self.state.computations[newVal]), {count: 0})
           self.setState({
             computation: newComputation,
             structureKey: newVal
@@ -277,5 +280,9 @@ const BlockComputation = React.createClass({
   }
   ,
 });
+
+BlockComputation.defaultProps = {
+  structureKey: 0
+};
 
 export default BlockComputation;
