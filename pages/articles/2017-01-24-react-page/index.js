@@ -22,7 +22,7 @@ class Post extends React.Component {
               <BlockComputation associative={false} commutes={true} numTerms="4" structureKey="0"/>
               <p>It seems that commutativity provides us with some tools for rearranging a computation, but it doesnt quite provide enough for us to be about to go to any arbitrary computation. Okay so let's sidebar commutativity and try out associativity. Maybe there we'll have some better luck. Behold! Our first associative computation:</p>
               <BlockComputation associative={true} commutes={false} numTerms="3"/>
-              <p>It looks like we lost the ability to swap the arguments from within a block. Instead, we now have another operation we can perform which changes the
+              <p>It looks like we lost the ability to swap the arguments from within a block. Instead, we now have another operation we can perform which changes the</p>
               <BlockComputation associative={true} commutes={false} numTerms="6"/>
             </div>
           </div>
