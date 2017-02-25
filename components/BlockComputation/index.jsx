@@ -150,7 +150,7 @@ const BlockComputation = React.createClass({
   associativeControls(){
     let self = this;
     return <div className="controls">
-      <div className="left-arrow" onClick={function () {
+      <div className="assoc-left" onClick={function () {
         if (self.state.structureKey < self.state.computations.length - 1) {
           let newVal = self.state.structureKey + 1
           let newComputation = self.mapValuesToArgSeq(_.cloneDeep(self.state.computations[newVal]), {count: 0})
@@ -160,9 +160,9 @@ const BlockComputation = React.createClass({
           })
         }
       }}>
-        <i className="fa fa-arrow-left"></i>
+        <i className="fa fa-arrow-left"/>
       </div>
-      <div className="right-arrow" onClick={function () {
+      <div className="assoc-right" onClick={function () {
         if (self.state.structureKey > 0) {
           let newVal = self.state.structureKey - 1
           let newComputation = self.mapValuesToArgSeq(_.cloneDeep(self.state.computations[newVal]), {count: 0})
@@ -172,7 +172,7 @@ const BlockComputation = React.createClass({
           })
         }
       }}>
-        <i className="fa fa-arrow-right"></i>
+        <i className="fa fa-arrow-right"/>
       </div>
     </div>
   },
@@ -218,7 +218,7 @@ const BlockComputation = React.createClass({
     }
     else {
       if (value === swapElement) {
-        return <div className="swapButton"
+        return <div className="swap-button"
                     onClick={
                       function () {
                         //modify the computation by swapping the terms

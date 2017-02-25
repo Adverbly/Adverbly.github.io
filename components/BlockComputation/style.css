@@ -13,25 +13,39 @@
     box-shadow: 1px 0px 5px 2px rgba(0,0,0,0.5);
 }
 
-.swapButton:hover {
-    color: black;
-}
-
-.swapButton {
-    color: rgba(34, 34, 34, 0.43);
-}
-
 .controls {
     justify-content: center;
     align-items: center;
     display: flex;
+    color: rgba(34, 34, 34, 0.43);
 }
-.left-arrow {
+
+.assoc-left {
+    color: rgba(34, 34, 34, 0.43);
     margin-right: 50px
 }
-.right-arrow {
+
+.assoc-left:hover {
+    color: black;
+}
+
+.assoc-right {
+    color: rgba(34, 34, 34, 0.43);
     margin-left: 50px
 }
+
+.assoc-right:hover {
+    color: black;
+}
+
+.swap-button {
+    color: rgba(34, 34, 34, 0.43);
+}
+
+.swap-button:hover {
+    color: black;
+}
+
 .full-computation {
     /*height: 200px;*/
 }
