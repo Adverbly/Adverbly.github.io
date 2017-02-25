@@ -22,8 +22,13 @@ class Post extends React.Component {
               <BlockComputation associative={false} commutes={true} numTerms="4" structureKey="0"/>
               <p>It seems that commutativity provides us with some tools for rearranging a computation, but it doesnt quite provide enough for us to be about to go to any arbitrary computation. Okay so let's sidebar commutativity and try out associativity. Maybe there we'll have some better luck. Behold! Our first associative computation:</p>
               <BlockComputation associative={true} commutes={false} numTerms="3"/>
-              <p>It looks like we lost the ability to swap the arguments from within a block. Instead, we now have another operation we can perform which changes the</p>
-              <BlockComputation associative={true} commutes={false} numTerms="6"/>
+              <p>It looks like we lost the ability to swap the arguments from within a block. Instead, we now have another operation that lets us change how the arguments are grouped within the blocks that make up the computation. As you can tell here, it's pretty obvious why people needed to show three terms in the examples of associativity(1+(2+3)=(1+2)+3), where only 2 for commutativity(1+2=2+1). There is no re-arranging that can be done in the 2-term case. Lets play around with a more complex example:</p>
+                <BlockComputation associative={true} commutes={true} numTerms="5"/>
+              <p>Pretty neat. It looks like we have a complete control over the grouping of the terms. In fact, we can get any grouping pattern that we want! Unfortunately despite having complete control over the groupings, it is pretty clear that once again we won't be able to cover all possible computations. For example, consider the 3 case again:</p>
+                <BlockComputation associative={true} commutes={false} numTerms="3"/>
+              <p>Moving the green block over to the left hand side here is never going to happen. Just like we got stuck with the commutative property not being able to move the green block over to the grouping with the yellow block, here we are stuck with not being able to put the blue block next to the green block. Okay so what if we combined the properties? Let's go back to the commutative structure we saw previously and see if we can get the yellow and green blocks to be in the same grouping. Give it a shot.</p>
+              <BlockComputation associative={true} commutes={true} numTerms="4" structureKey="2"/>
+              <p>If you kept trying you should have been able to figure out a way to do it by combining the two operations. So what is going on here? </p>
             </div>
           </div>
         </div>
