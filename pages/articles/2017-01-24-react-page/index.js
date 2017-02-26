@@ -14,7 +14,7 @@ class Post extends React.Component {
           <div className="text">
             <h1>{this.props.route.page.data.title}</h1>
             <div id="content">
-              <BlockComputation associative={false} commutes={false} initComputation={[1,[2,3]]}/>
+              <BlockComputation associative={false} commutes={false} initComputation={[1,[2,3]]} layout="grid"/>
               <BlockComputation associative={false} commutes={false} initComputation={[3,[1,2]]}/>
               <BlockComputation associative={false} commutes={false} initComputation={[[1,3],2]}/>
               <BlockComputation associative={true} commutes={true} numTerms="4" structureKey="2"/>
