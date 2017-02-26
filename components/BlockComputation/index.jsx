@@ -55,9 +55,23 @@ function cartesianProduct() {
 const BlockComputation = React.createClass({
 
   getInitialState() {
+    // TODO this is on its way to being gross. Need to make it so that the only prop is computation.
     let numTerms = parseInt(this.props.numTerms);
     let computations = bestowIds(associativeGroups(numTerms));
     let structureKey = parseInt(this.props.structureKey);
+    let computation
+    let argSequence = range(1, numTerms + 1)
+    if(this.props.initComputation === undefined) {
+      computation =  _.cloneDeep(computations[structureKey])
+    }  else {
+      computation = this.props.initComputation
+      argSequence = _.flattenDeep(computation)
+      numTerms = argSequence.length
+      computations = bestowIds(associativeGroups(numTerms));
+      // mapValues to Count is needed here because it gives us the ability to let us compare by structure only
+      structureKey = this.findKeyOfStructureForComputations(mapValuesToCount(_.cloneDeep(computation), {count: 0}), computations)
+    }
+
     return {
       mouse: [0, 0],
       delta: [0, 0], // difference between mouse and circle pos, for dragging
@@ -66,9 +80,9 @@ const BlockComputation = React.createClass({
       order: range(numTerms), // index: visual position. value: component key/id
       targets: [],
       invalidTargets: [],
-      computation: _.cloneDeep(computations[structureKey]),
+      computation: computation,
       structureKey: structureKey,
-      argSequence: range(1, numTerms + 1), // 1,2,3,4 for for 4 terms
+      argSequence: argSequence, // 1,2,3,4 for for 4 terms
       numTerms:  numTerms,
       computations:  computations
     };
@@ -130,8 +144,12 @@ const BlockComputation = React.createClass({
   },
 
   findKeyOfStructure(structure) {
-    for (let i = 0; i < this.state.computations.length; i++) {
-      if (_.isEqual(structure, this.state.computations[i])) {
+    return this.findKeyOfStructureForComputations(structure, this.state.computations);
+  },
+
+  findKeyOfStructureForComputations(structure, computations) {
+    for (let i = 0; i < computations.length; i++) {
+      if (_.isEqual(structure, computations[i])) {
         return i
       }
     }
