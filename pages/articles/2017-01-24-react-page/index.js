@@ -24,7 +24,7 @@ class Post extends React.Component {
                   the hundredth time because it just won't seem to stick in your head? To me, this is a red flag that I
                   don't yet <a href="https://www.wired.com/1996/02/jobs-2/"><b>grok</b></a> a concept. My most recent
                   example of this was while learning about <a href="https://wiki.haskell.org/Monad_laws"><b>Monads in
-                    Category Theory</b></a>. Associativity and Commutativity seem to come up quite a bit in advanced math,
+                    Category Theory</b></a>. Associativity and Commutativity seem to come up quite a bit in higher level math,
                   but for the life of me I can't ever seem to remember which one is which. I always remember the pair as
                   being <em>those properties of a function where you can rearrange things in an equation and still get the
                     same answer.</em> Sounds simple enough... And it is! In fact, they regularly teach this stuff to young
@@ -42,8 +42,8 @@ class Post extends React.Component {
                   simple computation for a Commutative function with 2 arguments, similar to 1+2:
                 </p>
                 <BlockComputationSingle associative={false} commutes={true} numTerms="2"/>
-                <p>Notice how for a commutative function, we can swap the green and blue boxes. Cool. That gives us pretty
-                  much every possible configuration that we could ever want. Here is a more complex commutative function
+                <p>Notice how for a commutative function, we can swap the green and blue boxes. Cool. That gives us both of the possible 2-argument computations. Great. Here is a more complex
+                  commutative function
                   that might represent a larger computation like "((1~2)~(3~4))". I'm using "~" here to denote our binary
                   function operating on it's two arguments. </p>
                 <BlockComputationSingle associative={false} commutes={true} numTerms="4" structureKey="2"/>
@@ -72,7 +72,9 @@ class Post extends React.Component {
                 <BlockComputationSingle associative={false} commutes={false} numTerms="5" structureKey="6"/>
                 <p>Pretty neat. It looks like we have a complete control over the grouping of the terms. In fact, we can
                   get any grouping pattern that we want! Unfortunately despite having complete control over the groupings,
-                  it is pretty clear that once again we won't be able to cover all possible computations. For example,
+                  it is pretty clear that once again we won't be able to cover all possible computations. </p>
+                <BlockComputationSingle associative={true} commutes={false} numTerms="3" initComputation={[1, [2, 3]]}/>
+                <p>For example,
                   try moving our earlier 3 term example to look like this:</p>
                 <BlockComputationSingle associative={false} commutes={false} numTerms="3" initComputation={[1, [3, 2]]}/>
                 <p>Moving the green block over to the left hand side here is never going to happen. Just like we got stuck
@@ -111,7 +113,7 @@ class Post extends React.Component {
                   in combinatorics, but one application that caught my eye was for full binary trees. In fact, these abstracted computations that we have been drawing up to now have actually just been
                   full binary trees, where the leaf nodes are arguments, and the parent nodes are the result of their children's evaluation.</p>
                 <p>The leaf nodes represent the inputs, and the structure of the tree represents exactly how those arguments are consumed. Neat! Okay so let's bring this back to associativity and
-                  commutativity now. How does adding these properties change the relationship between the computation and that computation's representation?</p>
+                  commutativity now. How does adding these properties change which data structures can be used to represent the computation?</p>
                 <p>If we add both properties, we are guaranteed equivalency to any other computation with the same count of each argument. For any associative and commutative function,</p>
 
                 <BlockComputationSingle associative={false} commutes={false} initComputation={[[4, 1], [3, 2], [[5, 2], [[1, 2], 3]]]}/>
@@ -126,13 +128,15 @@ class Post extends React.Component {
                 <p>is the same as</p>
                 <BlockComputationSingle associative={false} commutes={false} initComputation={[[4, 1], [3, 2], [[5, 2], [[1, 2], 3]]]}/>
                 <p> The associative property lets us freely change between groupings of the arguments making up the computation, but it provides no way of changing the sequence of the arguments in the
-                  computation. So any data structure that we choose must maintain the sequence of the arguments. A linked list or an array would suffice. Neat! Okay how about the commutative property?
-                  The commutative property gives us a swapping function that lets us rearrange the sequence of arguments, but gives us less control over the groupings when we do. In other words, for a
+                  computation. So any data structure that we choose must maintain the sequence of the arguments. A linked list or an array would suffice. </p>
+                <p>Neat! Okay how about the commutative property?
+                  The commutative property gives us a swapping function that lets us rearrange the sequence of a arguments within a grouping, but gives us less control over the groupings when we do.
+                  In other words, for a
                   commutative function,</p>
                 <BlockComputationSingle associative={false} commutes={false} initComputation={[4, 5, 6, 7, 8, 9, 10, 11, 12]}/>
                 <p>is the same as</p>
                 <BlockComputationSingle associative={false} commutes={false} initComputation={[9, 10, 11, 4, 5, 6, 7, 8, 12]}/>
-                <p>can change the groupings as well as the sequence of a computation. This makes it a bit harder to pin down. Within each group it is possible to compress it down to a count of each
+                <p>This makes it a bit harder to pin down. Within each group it is possible to compress it down to a count of each
                   argument value, similar to what we did with both properties present, but we fall short this time of being able to reuse one argument count across all groups.</p>
               </div>
             </div>
