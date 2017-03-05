@@ -53,8 +53,8 @@ class Post extends React.Component {
                 <BlockComputationSingle associative={false} commutes={false} initComputation={[[4, 1], [3, 2]]}/>
                 <p>Huh... It seems like in the 2 term case we could make every possible configuration(green on right and
                   green on left), but here we can't! The yellow and the green blocks can't ever be in the same group based
-                  on where we started from.
-                  In fact, even less concerning is the fact that we can't even swap our way to a nesting structure like
+                  on where we started from. Furthermore, those blocks that are in a group already cannot leave that group. This prevents us from being able to create any arbitrary sequence of arguments left to right as you can never have elements from one group placed at both ends of the sequence as it would mean breaking up the group.
+                  Even less concerning is the fact that we can't even swap our way to a nesting structure like
                   the one below.</p>
                 <BlockComputationSingle associative={false} commutes={true} numTerms="4" structureKey="0"/>
                 <p>It seems that commutativity provides us with some tools for rearranging a computation, but it doesnt
@@ -136,8 +136,12 @@ class Post extends React.Component {
                 <BlockComputationSingle associative={false} commutes={false} initComputation={[4, 5, 6, 7, 8, 9, 10, 11, 12]}/>
                 <p>is the same as</p>
                 <BlockComputationSingle associative={false} commutes={false} initComputation={[9, 10, 11, 4, 5, 6, 7, 8, 12]}/>
-                <p>This makes it a bit harder to pin down. Within each group it is possible to compress it down to a count of each
-                  argument value, similar to what we did with both properties present, but we fall short this time of being able to reuse one argument count across all groups.</p>
+                <p>This makes it a bit harder to pin down. Within each group it is possible to represent the arguments as a count of the arguments within the group, similar to what we did with both properties present, but we fall short this time of being able to reuse one argument count across all groups. As a result, we will require nested hashmaps to be able to represent computations which only possess the commutative property. To summarize, </p>
+                <p>associative and commutative - Hashmap</p>
+                <p>associative and not commutative - Linked List</p>
+                <p>not associative and commutative - Nested Hashmap</p>
+                <p>not associative and not commutative - Full Binary Tree</p>
+                <p>Great! I hoped this visual dive into the exact definition and consequences of these properties has helped with your understanding. </p>
               </div>
             </div>
           </div>
