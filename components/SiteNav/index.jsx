@@ -14,7 +14,8 @@ class SiteNav extends React.Component {
                   </Link>
                 </li>
                 <li>
-                  <Link to={ prefixLink('/resume.html')} activeClassName="current"> About me
+                  <a href="http://www.georgepatrickmontgomery.com/resume.html">About me</a>
+                  <Link to={ prefixLink('/resume.html/')} activeClassName="current" onlyActiveOnIndex> About me
                   </Link>
                 </li>
               </ul>
