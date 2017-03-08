@@ -1,5 +1,4 @@
 const React = require('react')
-const DatePicker = require('./single-date-picker')
 const DraggableBalls = require('../../../components/DraggableBalls')
 const BlockComputation = require('../../../components/BlockComputation')
 const BlockComputationGroup = require('../../../components/BlockComputationGroup')
