@@ -9,7 +9,7 @@ description: "A journey to discover new numbers through a pattern of repeating, 
 
 # New Numbers
 
-##Part 1 
+## Part 1 
 Let's imagine a world where we only ever knew about natural numbers(1,2,3...). We start doing some cool things with them like counting:
 ```
 count(1) = 2
@@ -30,7 +30,7 @@ But then some smarty pants comes along and comes up with an expression that we d
 
 So we invent **negative numbers**.
 
-##Part 2
+## Part 2
 One day, someone is doing a bunch of adding. 
 ```
 2 + 2 = 4
@@ -51,7 +51,7 @@ But then some smarty pants comes along and comes up with an expression that we d
 
 So we invent **fractional numbers**.
 
-##Part 3
+## Part 3
 One day, someone is doing a bunch of multiplying. 
 ```
 2 * 2 = 4

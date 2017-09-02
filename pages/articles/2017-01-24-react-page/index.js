@@ -136,7 +136,7 @@ class Post extends React.Component {
                 <p>is the same as</p>
                 <BlockComputationSingle associative={false} commutes={false} initComputation={[9, 10, 11, 4, 5, 6, 7, 8, 12]}/>
                 <p>This makes it a bit harder to pin down. Within each group it is possible to represent the arguments as a count of the arguments within the group, similar to what we did with both properties present, but we fall short this time of being able to reuse one argument count across all groups. As a result, we will require nested hashmaps to be able to represent computations which only possess the commutative property. To summarize, </p>
-                <p>Associative and Aommutative - Hashmap</p>
+                <p>Associative and Commutative** - Hashmap</p>
                 <p>Associative and Not Commutative - Linked List</p>
                 <p>Not Associative and Commutative - Nested Hashmap</p>
                 <p>Not Associative and Not Commutative - Full Binary Tree</p>
