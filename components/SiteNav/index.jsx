@@ -14,7 +14,7 @@ class SiteNav extends React.Component {
                   </Link>
                 </li>
                 <li>
-                  <a href="/resume.html">About me</a>
+                  <a href="/resume">About me</a>
                 </li>
               </ul>
             </nav>

@@ -7,3 +7,5 @@ pages/.manifest
 gatsby-starter-lumen.iml
 .vscode/
 blag.iml
+
+package-lock\.json
